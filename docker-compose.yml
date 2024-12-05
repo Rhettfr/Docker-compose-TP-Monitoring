@@ -43,6 +43,7 @@ services:
       - zabbix-db
     volumes:
       - ./zabbix_server:/var/lib/zabbix
+      - ./zabbix.psk:/etc/zabbix/zabbix.psk:ro
     ports:
       - "10051:10051"
     networks:
@@ -70,11 +71,16 @@ services:
     container_name: zabbix-agent
     environment:
       ZBX_SERVER_HOST: zabbix-server
+      ZBX_TLSCONNECT: psk
+      ZBX_TLSACCEPT: psk
+      ZBX_TLSPSKIDENTITY: Agent1
+      ZBX_TLSPSKFILE: /etc/zabbix/zabbix.psk
     depends_on:
       - zabbix-server
     networks:
       - zabbix-net
     volumes:
+      - ./psk/zabbix.psk:/etc/zabbix/zabbix.psk:ro
       - ./zabbix_agent:/var/lib/zabbix
 
   # phpMyAdmin for managing the MySQL database
